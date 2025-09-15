@@ -286,9 +286,6 @@
         .view.active {
             display: flex;
         }
-        .view.hidden {
-            display: none;
-        }
         
         .digit-label {
             font-size: 1.2rem;
@@ -480,21 +477,26 @@
         function switchView(view) {
             // Remove active class from all buttons and views
             [normalBtn, binaryBtn, wordBtn, shapeBtn].forEach(btn => btn.classList.remove('active'));
-            [normalView, binaryView, wordView, shapeView].forEach(view => view.classList.remove('active'));
+            [normalView, binaryView, wordView, shapeView].forEach(viewElement => viewElement.classList.remove('active'));
             
             // Add active class to selected button and view
-            if (view === 'normal') {
-                normalBtn.classList.add('active');
-                normalView.classList.add('active');
-            } else if (view === 'binary') {
-                binaryBtn.classList.add('active');
-                binaryView.classList.add('active');
-            } else if (view === 'word') {
-                wordBtn.classList.add('active');
-                wordView.classList.add('active');
-            } else if (view === 'shape') {
-                shapeBtn.classList.add('active');
-                shapeView.classList.add('active');
+            switch(view) {
+                case 'normal':
+                    normalBtn.classList.add('active');
+                    normalView.classList.add('active');
+                    break;
+                case 'binary':
+                    binaryBtn.classList.add('active');
+                    binaryView.classList.add('active');
+                    break;
+                case 'word':
+                    wordBtn.classList.add('active');
+                    wordView.classList.add('active');
+                    break;
+                case 'shape':
+                    shapeBtn.classList.add('active');
+                    shapeView.classList.add('active');
+                    break;
             }
         }
         
