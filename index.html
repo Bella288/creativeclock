@@ -403,7 +403,7 @@
                             <div class="top-card" id="s-ones-top">0</div>
                             <div class="bottom-card" id="s-ones-bottom">0</div>
                             <div class="flip-digit" id="s-ones-flip">
-                                <div class="front">0</div>
+                                <div class'="front">0</div>
                                 <div class="back">0</div>
                             </div>
                         </div>
@@ -662,9 +662,17 @@
         // Update all clock displays
         function updateAllClocks() {
             updateNormalTime();
-            updateBinaryTime();
-            updateWordTime();
-            updateShapeTime();
+            
+            // Only update the visible clock view
+            if (normalView.classList.contains('active')) {
+                updateNormalTime();
+            } else if (binaryView.classList.contains('active')) {
+                updateBinaryTime();
+            } else if (wordView.classList.contains('active')) {
+                updateWordTime();
+            } else if (shapeView.classList.contains('active')) {
+                updateShapeTime();
+            }
         }
         
         // Initialize and update clocks every second
