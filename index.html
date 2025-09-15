@@ -287,6 +287,10 @@
             display: flex;
         }
         
+        .view.hidden {
+            display: none;
+        }
+        
         .digit-label {
             font-size: 1.2rem;
             font-weight: bold;
@@ -411,7 +415,7 @@
                 </div>
             </div>
             
-            <div id="binary-view" class="view">
+            <div id="binary-view" class="view hidden">
                 <div class="binary-digits">
                     <div class="binary-digit">
                         <div class="digit-label">H</div>
@@ -441,11 +445,11 @@
                 </div>
             </div>
             
-            <div id="word-view" class="view">
+            <div id="word-view" class="view hidden">
                 <div class="time-text" id="time-text"></div>
             </div>
             
-            <div id="shape-view" class="view">
+            <div id="shape-view" class="view hidden">
                 <div class="shape-container">
                     <div class="shape hour-shape"></div>
                     <div class="shape minute-shape"></div>
@@ -476,26 +480,36 @@
         
         function switchView(view) {
             // Remove active class from all buttons and views
-            [normalBtn, binaryBtn, wordBtn, shapeBtn].forEach(btn => btn.classList.remove('active'));
-            [normalView, binaryView, wordView, shapeView].forEach(viewElement => viewElement.classList.remove('active'));
+            [normalBtn, binaryBtn, wordBtn, shapeBtn].forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            [normalView, binaryView, wordView, shapeView].forEach(viewElement => {
+                viewElement.classList.remove('active');
+                viewElement.classList.add('hidden');
+            });
             
             // Add active class to selected button and view
             switch(view) {
                 case 'normal':
                     normalBtn.classList.add('active');
                     normalView.classList.add('active');
+                    normalView.classList.remove('hidden');
                     break;
                 case 'binary':
                     binaryBtn.classList.add('active');
                     binaryView.classList.add('active');
+                    binaryView.classList.remove('hidden');
                     break;
                 case 'word':
                     wordBtn.classList.add('active');
                     wordView.classList.add('active');
+                    wordView.classList.remove('hidden');
                     break;
                 case 'shape':
                     shapeBtn.classList.add('active');
                     shapeView.classList.add('active');
+                    shapeView.classList.remove('hidden');
                     break;
             }
         }
