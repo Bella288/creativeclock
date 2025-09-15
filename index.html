@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .clock-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+        
+        .view-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        button.active {
+            background: rgba(255, 255, 255, 0.4);
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Binary View */
+        #binary-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .binary-digits {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .binary-digit {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .bit {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .bit.active {
+            background: #4CAF50;
+            box-shadow: 0 0 15px #4CAF50;
+        }
+        
+        /* Word View */
+        #word-view {
+            font-size: 2.5rem;
+            line-height: 1.5;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .time-text {
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Shape View */
+        #shape-view {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+        
+        .shape-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            transition: all 0.5s ease;
+        }
+        
+        .hour-shape {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 0, 0, 0.7);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .minute-shape {
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 255, 0, 0.7);
+        }
+        
+        .second-shape {
+            width: 160px;
+            height: 160px;
+            background: rgba(0, 0, 255, 0.7);
+        }
+        
+        .view {
+            display: none;
+        }
+        
+        .view.active {
+            display: block;
+        }
+        
+        .digit-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            .binary-digits {
+                gap: 15px;
+            }
+            
+            .bit {
+                width: 30px;
+                height: 30px;
+            }
+            
+            #word-view {
+                font-size: 1.8rem;
+            }
+            
+            .shape-container {
+                width: 220px;
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Creative Clock</h1>
+        
+        <div class="view-controls">
+            <button id="binary-btn" class="active">Binary View</button>
+            <button id="word-btn">Word View</button>
+            <button id="shape-btn">Shape View</button>
+        </div>
+        
+        <div class="clock-container">
+            <div id="binary-view" class="view active">
+                <div class="binary-digits">
+                    <div class="binary-digit">
+                        <div class="digit-label">H</div>
+                        <div class="bit" id="h-bit-0">0</div>
+                        <div class="bit" id="h-bit-1">0</div>
+                        <div class="bit" id="h-bit-2">0</div>
+                        <div class="bit" id="h-bit-3">0</div>
+                    </div>
+                    <div class="binary-digit">
+                        <div class="digit-label">M</div>
+                        <div class="bit" id="m-bit-0">0</div>
+                        <div class="bit" id="m-bit-1">0</div>
+                        <div class="bit" id="m-bit-2">0</div>
+                        <div class="bit" id="m-bit-3">0</div>
+                        <div class="bit" id="m-bit-4">0</div>
+                        <div class="bit" id="m-bit-5">0</div>
+                    </div>
+                    <div class="binary-digit">
+                        <div class="digit-label">S</div>
+                        <div class="bit" id="s-bit-0">0</div>
+                        <div class="bit" id="s-bit-1">0</div>
+                        <div class="bit" id="s-bit-2">0</div>
+                        <div class="bit" id="s-bit-3">0</div>
+                        <div class="bit" id="s-bit-4">0</div>
+                        <div class="bit" id="s-bit-5">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="word-view" class="view">
+                <div class="time-text" id="time-text"></div>
+            </div>
+            
+            <div id="shape-view" class="view">
+                <div class="shape-container">
+                    <div class="shape hour-shape"></div>
+                    <div class="shape minute-shape"></div>
+                    <div class="shape second-shape"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const binaryBtn = document.getElementById('binary-btn');
+        const wordBtn = document.getElementById('word-btn');
+        const shapeBtn = document.getElementById('shape-btn');
+        const binaryView = document.getElementById('binary-view');
+        const wordView = document.getElementById('word-view');
+        const shapeView = document.getElementById('shape-view');
+        const timeText = document.getElementById('time-text');
+        
+        // Switch between views
+        binaryBtn.addEventListener('click', () => switchView('binary'));
+        wordBtn.addEventListener('click', () => switchView('word'));
+        shapeBtn.addEventListener('click', () => switchView('shape'));
+        
+        function switchView(view) {
+            // Remove active class from all buttons and views
+            [binaryBtn, wordBtn, shapeBtn].forEach(btn => btn.classList.remove('active'));
+            [binaryView, wordView, shapeView].forEach(view => view.classList.remove('active'));
+            
+            // Add active class to selected button and view
+            if (view === 'binary') {
+                binaryBtn.classList.add('active');
+                binaryView.classList.add('active');
+            } else if (view === 'word') {
+                wordBtn.classList.add('active');
+                wordView.classList.add('active');
+            } else if (view === 'shape') {
+                shapeBtn.classList.add('active');
+                shapeView.classList.add('active');
+            }
+        }
+        
+        // Update time functions
+        function updateBinaryTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // Convert to binary strings with padding
+            const hoursBinary = hours.toString(2).padStart(4, '0');
+            const minutesBinary = minutes.toString(2).padStart(6, '0');
+            const secondsBinary = seconds.toString(2).padStart(6, '0');
+            
+            // Update hour bits
+            for (let i = 0; i < 4; i++) {
+                const bitElement = document.getElementById(`h-bit-${i}`);
+                bitElement.textContent = hoursBinary[i];
+                bitElement.classList.toggle('active', hoursBinary[i] === '1');
+            }
+            
+            // Update minute bits
+            for (let i = 0; i < 6; i++) {
+                const bitElement = document.getElementById(`m-bit-${i}`);
+                bitElement.textContent = minutesBinary[i];
+                bitElement.classList.toggle('active', minutesBinary[i] === '1');
+            }
+            
+            // Update second bits
+            for (let i = 0; i < 6; i++) {
+                const bitElement = document.getElementById(`s-bit-${i}`);
+                bitElement.textContent = secondsBinary[i];
+                bitElement.classList.toggle('active', secondsBinary[i] === '1');
+            }
+        }
+        
+        function updateWordTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            
+            // Convert to 12-hour format
+            hours = hours % 12 || 12;
+            
+            // Word arrays
+            const hourWords = [
+                "twelve", "one", "two", "three", "four", "five", 
+                "six", "seven", "eight", "nine", "ten", "eleven", "twelve"
+            ];
+            
+            const minuteWords = [
+                "o'clock", "oh one", "oh two", "oh three", "oh four", "oh five", 
+                "oh six", "oh seven", "oh eight", "oh nine", "ten", "eleven", 
+                "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", 
+                "eighteen", "nineteen", "twenty", "twenty-one", "twenty-two", 
+                "twenty-three", "twenty-four", "twenty-five", "twenty-six", 
+                "twenty-seven", "twenty-eight", "twenty-nine", "thirty", "thirty-one", 
+                "thirty-two", "thirty-three", "thirty-four", "thirty-five", 
+                "thirty-six", "thirty-seven", "thirty-eight", "thirty-nine", "forty", 
+                "forty-one", "forty-two", "forty-three", "forty-four", "forty-five", 
+                "forty-six", "forty-seven", "forty-eight", "forty-nine", "fifty", 
+                "fifty-one", "fifty-two", "fifty-three", "fifty-four", "fifty-five", 
+                "fifty-six", "fifty-seven", "fifty-eight", "fifty-nine"
+            ];
+            
+            // Create time string
+            let timeString;
+            if (minutes === 0) {
+                timeString = `${hourWords[hours]} o'clock`;
+            } else {
+                timeString = `${hourWords[hours]} ${minuteWords[minutes]}`;
+            }
+            
+            timeText.textContent = timeString;
+        }
+        
+        function updateShapeTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // Get shape elements
+            const hourShape = document.querySelector('.hour-shape');
+            const minuteShape = document.querySelector('.minute-shape');
+            const secondShape = document.querySelector('.second-shape');
+            
+            // Calculate positions based on time
+            const hourRotation = (hours % 12) * 30; // 30 degrees per hour
+            const minuteRotation = minutes * 6; // 6 degrees per minute
+            const secondRotation = seconds * 6; // 6 degrees per second
+            
+            // Calculate distances from center
+            const hourDistance = 40;
+            const minuteDistance = 80;
+            const secondDistance = 120;
+            
+            // Calculate positions
+            const hourX = Math.cos((hourRotation - 90) * Math.PI / 180) * hourDistance;
+            const hourY = Math.sin((hourRotation - 90) * Math.PI / 180) * hourDistance;
+            
+            const minuteX = Math.cos((minuteRotation - 90) * Math.PI / 180) * minuteDistance;
+            const minuteY = Math.sin((minuteRotation - 90) * Math.PI / 180) * minuteDistance;
+            
+            const secondX = Math.cos((secondRotation - 90) * Math.PI / 180) * secondDistance;
+            const secondY = Math.sin((secondRotation - 90) * Math.PI / 180) * secondDistance;
+            
+            // Apply transformations
+            hourShape.style.transform = `translate(calc(-50% + ${hourX}px), calc(-50% + ${hourY}px))`;
+            minuteShape.style.transform = `translate(calc(-50% + ${minuteX}px), calc(-50% + ${minuteY}px))`;
+            secondShape.style.transform = `translate(calc(-50% + ${secondX}px), calc(-50% + ${secondY}px))`;
+            
+            // Adjust sizes based on time values
+            hourShape.style.width = `${40 + hours * 2}px`;
+            hourShape.style.height = `${40 + hours * 2}px`;
+            
+            minuteShape.style.width = `${30 + minutes}px`;
+            minuteShape.style.height = `${30 + minutes}px`;
+            
+            secondShape.style.width = `${20 + seconds}px`;
+            secondShape.style.height = `${20 + seconds}px`;
+        }
+        
+        // Update time initially and set intervals
+        updateBinaryTime();
+        updateWordTime();
+        updateShapeTime();
+        
+        setInterval(() => {
+            if (binaryView.classList.contains('active')) {
+                updateBinaryTime();
+            } else if (wordView.classList.contains('active')) {
+                updateWordTime();
+            } else if (shapeView.classList.contains('active')) {
+                updateShapeTime();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
